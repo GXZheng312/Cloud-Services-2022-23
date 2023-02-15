@@ -9,11 +9,16 @@ var Course = mongoose.model('Course');
 function getTeachers(req, res){
 	var query = { };
 
-    var result = Teacher.find(query);
+    var result = Teacher.find(query)
+                .populate('courses');
 
 	result.exec((err, data) => {
 		res.json(data);
 	});
+	
+	if (req.query.pageSize && req.query.pageIndex) {
+		result = result.byPage(req.query.pageSize, req.query.pageIndex);
+	}
 }
 
 function addTeacher(req, res){
@@ -31,6 +36,7 @@ function addTeacher(req, res){
 			res.json(err.errors);
 		});
 }
+
 
 // Routing
 router.route('/')
